@@ -16,6 +16,7 @@
                 code {
                     tab-size: 4;
 					-moz-tab-size: 4;
+					color: grey;
                 }
             </style>
 	</head>
@@ -23,32 +24,37 @@
 		<div class="reveal">
 			<div class="slides">
 				<section>
-					<h2>Git for the Uninitiated</h2>
-					Agenda
+					<h2>Functional Programming for the Uninitiated</h2>
+					It does not just mean your code works.<br>
 					<ul>
-						<li>Install Git</li>
-						<li>Use Git Locally</li>
-						<li>Create a GitHub account</li>
-						<li>Use Git with GitHub</li>
-						<li>Advanced Git Concepts (if there is time)</li>
-						<li><code>
-							git init, git add, git commit, git log, git push,
-							git pull, git merge, git rebase, git remote, git
-							reset, git checkout, git branch
-						</code></li>
+						<li>Motivations</li>
+						<li>State and Immutability</li>
+						<li>Higher Order Functions</li>
+						<li>The Promise Monad</li>
 					</ul>
+					<aside class="notes">
+						Hi, I'm Rob. Please feel free to interrupt at any point
+						if you have questions on either audio or in the chat.
+					</aside>
 				</section>
 				<section>
 					<h2>What is Git?</h2>
 					<!-- TODO: git logo -->
 					<p class="fragment">
-						Git is a version control system that is commonly used
-						for software.
+						Functional programming is a style of programming that
+						emphasizes functions.
 					</p>
 					<aside class="notes">
 						<ul>
-							<li>Explain the concept of version control.</li>
-							<li>Better than zips and email.</li>
+							<li>This might be astonishing, but...</li>
+							<li>
+								You may have heard of or used functional
+								programming languages, which are programming
+								languages specifically designed to use
+								functional programming. However, you don't need
+								a functional programming language to program in
+								a functional style.
+							</li>
 						</ul>
 					</aside>
 				</section>
@@ -60,20 +66,19 @@
 						and it is widely used across many companies and
 						organizations who manage software.
 					</p>
-				</section>
-				<section>
-					<h2>Installing Git</h2>
-					<ul>
-						<li><a href="https://git-scm.com/downloads">https://git-scm.com/downloads</a></li>
-						<li>Follow instructions for your OS.</li>
-					</ul>
 					<aside class="notes">
 						<ul>
-							<li>Give people a minute to get git installed.</li>
-							<li>Tell people they can create a GitHub account
-								if they finish early.</li>
+							<li>
+								Ask if there are any functional programming
+								gurus.  Say there will be something for everyone
+								in this talk. 
+							</li>
+							<li>Let's get into it.</li>
 						</ul>
 					</aside>
+				</section>
+				<section>
+					Let's start off with a demo.
 				</section>
 				<section>
 					<h1>Using Git</h1>
@@ -114,41 +119,124 @@
 						$ vim knighthacks.js
 						$ git status
 					</code></pre>
-					<aside>
-						My shell prompt actually has nice built in git
-						utilities, which show the current branch and whether
-						I've changed anything.
+				</section>
+				<section>
+					<h2>Side Effects</h2>
+					Functional programming also has a notion of
+					<strong>side effects</strong>.
+					<p class="fragment">
+						Side effects are things like writing to a file, reading
+						input, and other I/O operations. These are also outlawed
+						in functional programming, because they can behave like
+						another kind of state.
+					</p>
+					<pre class="fragment"><code data-trim class="js">
+						// not allowed in pure functional programming
+						function add_and_print(a, b) {
+							console.log(a + b);
+						}
+					</code></pre>
+				</section>
+				<section>
+					<h2>Pure Functions</h2>
+					Pure functions have no side effects and are
+					<strong>referentially transparent</strong>. How can you
+					check if a function is pure?<br>
+					<ul>
+						<li>
+							It shouldn't read from global variables (except for
+							compile-time constants).
+						</li>
+						<li>
+							It shouldn't modify its arguments.
+						</li>
+						<li>
+							It should return a value.
+						</li>
+						<li>
+							It should make sense to replace it with a simple
+							lookup table.
+						</li>
+					</ul>
+					<aside class="notes">
+						Unfortunately, it is nontrivial to enforce pure
+						functions in JavaScript, so we have to use discipline to
+						do it.
 					</aside>
 				</section>
 				<section>
-					<h2>The Index</h2>
-					<ul>
-						<li>Changes start off in the <em>working tree</em>.</li>
-						<li>
-							The index is a staging area for changes we want to
-							commit.
-						</li>
-						<li>
-							Use <code>git add &lt;file&gt;</code> to stage your
-							changes.
-						</li>
-						<li>A popular choice is <code>git add .</code> which
-							adds every file in the current directory (folder).</li>
-					</ul>
-					<pre><code data-trim class="shell">
-						$ git add knighthacks.js
-						$ git status
+					<h2>Is it pure?</h2>
+					<pre><code data-trim class="js">
+						function get_random(min, max) {
+							// returns a random value in the given range 
+							return Math.floor(Math.random() * (max - min) + min);
+						}
 					</code></pre>
+					<p class="fragment">
+						No, it can return different values even if given the
+						same arguments.
+					</p>
 				</section>
 				<section>
-					<h2>Creating your first commit</h2>
-					A set of changes forms what git calls a commit.
-					<pre><code data-trim class="shell">
-						$ git commit
+					<h2>Is it pure?</h2>
+					<pre><code data-trim class="js">
+						function print_sum(a, b) {
+							console.log(a + b);
+						}
 					</code></pre>
-					Each time you make changes that you want to put in the
-					project history, you will have to run <code>git add</code>
-					and <code>git commit</code>.
+					<p class="fragment">
+						No, it has a side effect (printing a value). Another
+						warning sign is that fact that it doesn't return a
+						value.
+					</p>
+				</section>
+				<section>
+					<h2>Is it pure?</h2>
+					<pre><code data-trim class="js">
+						function append_twice(array, item) {
+							array.push(item);
+							array.push(item);
+							return array;
+						}
+					</code></pre>
+					<p>
+						No, it modifies the <code>array</code> argument, which
+						is a side effect (some other part of the code might be
+						looking at <code>array</code>).
+					</p>
+				</section>
+				<section>
+					<h2>Is it pure?</h2>
+					<pre><code data-trim class="js">
+						function add_and_divide(a, b, c) {
+							return (a + b) / c;
+						}
+					</code></pre>
+					<p class="fragment">
+						Yes! It doesn't modify its arguments, doesn't have side
+						effects, and for a given value of a, b, and c, it will
+						always have the same result.
+					</p>
+				</section>
+				<section>
+					You might be wondering: if we can't change anything, print
+					anything, or do any kind of I/O, are we just limited to
+					math? How can we do <strong>actual work</strong>?
+					<aside class="notes">
+						We don't live in a purely functional world. Users expect
+						to be able to provide input and see corresponding
+						output. Things change in real life.
+					</aside>
+				</section>
+				<section>
+					Luckily, these are just ideals. Most applications will need
+					state, and nearly all will perform some kind of I/O.
+					<p class="fragment">
+						Our goal with functional programming is to
+						<em>minimize</em> state and side effects, and to use
+						clever tricks to keep them manageable.
+					</p>
+>>>>>>> 985cdab... Add code and many slides
 					<aside class="notes">
 						<ul>
 							<li>
@@ -206,7 +294,215 @@
 							<li>Main exception to imperative mood is "Initial
 								commit"</li>
 						</ul>
+=======
+				</section>
+				<section>
+					<h1>functions</h1>
+					Functions are great, but standard JavaScript syntax is
+					pretty verbose. If functions are 50% of our toolbox, they
+					should be easier to use.
+					<pre><code data-trim class="js">
+						// lots of typing for a simple idea
+						function sum(a, b) {
+							return a + b;
+						}
+					</code></pre>
+				</section>
+				<section>
+					<h1>The Lambda</h1>
+					<pre><code data-trim class="js">
+						// lots of typing for a simple idea
+						function sum(a, b) {
+							return a + b;
+						}
+					</code></pre>
+					<pre><code data-trim class="js">
+						// better
+						function(a, b) { return a + b; }
+					</code></pre>
+					<pre><code data-trim class="js">
+						// best
+						(a, b) => a + b;
+					</code></pre>
+					<pre><code data-trim class="js">
+						// we can even drop the () if there is only 1 parameter
+						a => a + 2;
+					</code></pre>
+					<aside class="notes">
+						Notice, we don't need to give the concept of sum a name.
 					</aside>
+				</section>
+				<section>
+					<h1>First Class Functions</h1>
+					In JavaScript, all types are created equal. Just like how we
+					can assign a number or string to a variable, we can assign a
+					function to a variable.
+					<pre><code data-trim class="js">
+						const pi = 3.14;
+						const sum = (a, b) => a + b;
+					</code></pre>
+					<aside class="notes">
+						This will seem quite odd at first, but after you begin
+						to use first class functions you will feel crippled in
+						languages without them.
+					</aside>
+				</section>
+				<section>
+					Similarly, we can pass a function as an argument to another
+					function, and return a function from an function, just like
+					any other type.
+					<pre><code data-trim class="js">
+						const a = 3;
+						const b = 4;
+						const answer = sum(a, b);
+					</code></pre>
+					<pre><code data-trim class="js">
+						const do_twice = fn => a => fn(fn(a))
+						const times_three = a => a * 3;
+						const times_nine = do_twice(times_three);
+						times_nine(2); // 18
+					</code></pre>
+				</section>
+				<section>
+					We can also do this anonymously.
+					<pre><code data-trim class="js">
+						const answer = sum(3, 4);
+					</code></pre>
+					<pre><code data-trim class="js">
+						const do_twice = fn => a => fn(fn(a))
+						const times_nine = do_twice(a => a * 3);
+						times_nine(2); // 18
+					</code></pre>
+				</section>
+				<section>
+					So what can we do with first class functions?
+					<aside class="notes">
+						If you take away one thing from the entire talk, this
+						next part is it.
+>>>>>>> 985cdab... Add code and many slides
+					</aside>
+				</section>
+				<section>
+					<h1><code>map()</code></h1>
+				</section>
+				<section>
+					We often want to iterate over a list and do something to
+					each element.
+					<pre><code data-trim class="js">
+						let stuff = [0, 1, 2, 3, 4];
+						for (let i = 0; i &lt; stuff.length; i++) {
+							 stuff[i] = stuff[i] + 1;
+						}
+						console.log(stuff_plus_one);
+						// [1, 2, 3, 4, 5]
+					</code></pre>
+					However, this code is relatively complex for just a simple
+					"+1" to each element.
+					<p class="fragment">
+						We can do better.
+					</p>
+				</section>
+				<section>
+					<code>map()</code> is a method that "maps" a function over
+					each element of an array.
+					<pre><code data-trim class="js">
+						const stuff = [0, 1, 2, 3, 4];
+						const stuff_plus_one = stuff.map(x => x + 1);
+						console.log(stuff_plus_one);
+						// [1, 2, 3, 4, 5]
+					</code></pre>
+					<aside class="notes">
+						Stop and see if people are confused. Map is called on
+						each element.
+					</aside>
+				</section>
+				<section>
+					<section>
+						Some languages, including JavaScript, have a "for each" loop
+						that is similar to <code>map()</code>.
+						<pre><code data-trim class="js">
+							const data = [1, 2, 3, 4, 5];
+							let data_plus_one = [];
+							for (const i of data) {
+								data_plus_one.push(i + 1);
+							}
+						</code></pre>
+						<aside class="notes">
+							It's better than the C-style for loop, but still
+							isn't as clean. The only reason I still use for
+							loops is if I need early exit (eg break) or certain
+							other stateful things. 90% of the time, you should
+							just use <code>map()</code> or <code>forEach()</code>.
+						</aside>
+					</section>
+					<section>
+						<code>for...of</code> vs <code>for...in</code>
+						<div style="color:red">Wrong</div>
+						<pre><code data-trim class="js">
+							const numbers = [1, 2, 3, 4, 5];
+							for (const a in numbers) {
+								console.log(a);
+							}
+							// 0, 1, 2, 3, 4
+						</code></pre>
+						<div style="color:green">Right</div>
+						<pre><code data-trim class="js">
+							const numbers = [1, 2, 3, 4, 5];
+							for (const a of numbers) {
+								console.log(a);
+							}
+							// 1, 2, 3, 4, 5
+						</code></pre>
+						<aside class="notes">
+							Please don't use <code>for...in</code> when you mean
+							<code>for...of</code>. <code>for...in</code> is only
+							needed if you want to iterate the properties of an
+							object.
+						</aside>
+					</section>
+				</section>
+				<section>
+					If you don't want to create a new array, use
+					<code>Array.forEach()</code>.
+					<pre><code data-trim class="js">
+						const data = [1, 2, 3, 4, 5];
+						data.forEach(x => console.log(x));
+						// 1, 2, 3, 4, 5
+					</code></pre>
+				</section>
+				<section>
+					<h1><code>filter()</code></h1>
+				</section>
+				<section>
+					Another common action is shrinking a list to remove elements
+					that you don't want.
+					<pre><code data-trim class="js">
+						const scores = [92, 45, 60, 85, 20, 98, 77, 80];
+						let passing = [];
+						for (const score of passing) {
+							if (score >= 60) {
+								passing.push(score);
+							}
+						}
+						console.log(passing);
+						// [92, 60, 85, 98, 77, 80]
+					</code></pre>
+				</section>
+				<section>
+					<code>filter()</code> lets us express the same idea in a
+					more concise manner.
+					<pre><code data-trim class="js">
+						const scores = [92, 45, 60, 85, 20, 98, 77, 80];
+						const passing = scores.filter(score => score >= 60);
+						console.log(passing);
+						// [92, 60, 85, 98, 77, 80]
+					</code></pre>
+					<aside class="notes">
+						Literally half the code.
+					</aside>
+				</section>
+				<section>
+					<h1><code>reduce()</code></h1>
 				</section>
 			</div>
 		</div>
