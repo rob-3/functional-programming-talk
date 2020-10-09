@@ -236,65 +236,6 @@
 						<em>minimize</em> state and side effects, and to use
 						clever tricks to keep them manageable.
 					</p>
->>>>>>> 985cdab... Add code and many slides
-					<aside class="notes">
-						<ul>
-							<li>
-								If this is the first time you've used git,
-								you'll probably get an error about setting your
-								name and email.  Git includes your name and
-								email in every commit you make so that in a very
-								large project it is possible to hunt down the
-								specific person who wrote a piece of code.  Go
-								ahead and run the commands it tells you in the
-								help.
-							</li>
-							<li>
-								You don't need to make a commit for a temporary
-								change or test that you might not want to commit
-								to (haha).
-							</li>
-						</ul>
-					</aside>
-				</section>
-				<section>
-					<h2>Writing a Commit Message</h2>
-					<ul>
-						<li>
-							A commit message explains what the commit did, and
-							potentially why.
-						</li>
-						<li>
-							Think of it like a comment, but not in the code.
-						</li>
-						<li>
-							Two parts:
-							<ul>
-								<li>Short summary (strict 80 char limit)</li>
-								<li>(Optional) extended message</li>
-							</ul>
-						</li>
-						<li>
-							Short summary should use the imperative mood.
-							<ul>
-								<li>"This commit will..."</li>
-							</ul>
-						</li>
-						<li>Capitalize the first letter.</li>
-					</ul>
-					<aside class="notes">
-						<ul>
-							<li>I see many people doing this improperly.</li>
-							<li>Short summary should contain the "what".</li>
-							<li>Extended message can contain the "why".</li>
-							<li>
-								There should be a blank line between the summary
-								and the extended message.
-							</li>
-							<li>Main exception to imperative mood is "Initial
-								commit"</li>
-						</ul>
-=======
 				</section>
 				<section>
 					<h1>functions</h1>
@@ -503,6 +444,17 @@
 				</section>
 				<section>
 					<h1><code>reduce()</code></h1>
+				</section>
+				<section>
+					<code>reduce()</code> is a simple way to collapse a list
+					into a single element. A common use might be to add a list
+					of numbers.
+					<pre><code data-trim class="js">
+						const data = [5, 3, 15, 0, -3, 6];
+						const total = data.reduce((acc, cur) => acc + cur, 0);
+						console.log(total);
+						// 26
+					</code></pre>
 				</section>
 			</div>
 		</div>
