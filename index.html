@@ -25,7 +25,7 @@
 			<div class="slides">
 				<section>
 					<h2>Functional Programming for the Uninitiated</h2>
-					It does not just mean your code works.<br>
+					<em>It does not just mean your code works.</em><br>
 					<ul>
 						<li>Motivations</li>
 						<li>State and Immutability</li>
@@ -69,7 +69,7 @@
 						<ul>
 							<li>
 								Ask if there are any functional programming
-								gurus.  Say there will be something for everyone
+								gurus. Say there will be something for everyone
 								in this talk. 
 							</li>
 							<li>Let's get into it.</li>
@@ -121,7 +121,6 @@
 				<section>
 					<section>
 						In functional programming, we outlaw state.
-						<!-- image of state crossed out -->
 						<p class="fragment">
 							Once we initialize a "variable", we never change it
 							again. This is called <strong>immutability</strong>,
@@ -226,7 +225,8 @@
 					<aside class="notes">
 						Unfortunately, it is nontrivial to enforce pure
 						functions in JavaScript, so we have to use discipline to
-						do it.
+						do it. Important to note that if you strictly abide by
+						immutable data, this is much easier.
 					</aside>
 				</section>
 				<section>
@@ -284,6 +284,25 @@
 					</p>
 				</section>
 				<section>
+					<h2>Is it pure?</h2>
+					<pre><code data-trim class="js">
+						function make_list(n) {
+							const arr = [];
+							for (let i = 0; i &lt; n; i++) {
+								arr.push(i)
+							}
+							return arr;
+						}
+					</code></pre>
+					<p class="fragment">
+						Yes. Even though it does mutate the list and i, this
+						won't have any side effects outside of the function.
+						There is no way anyone could know that
+						<code>make_list()</code> is "impure", so for all
+						practical purposes, this is pure.
+					</p>
+				</section>
+				<section>
 					You might be wondering: if we can't change anything, print
 					anything, or do any kind of I/O, are we just limited to
 					math? How can we do <strong>actual work</strong>?
@@ -292,7 +311,8 @@
 						to be able to provide input and see corresponding
 						output. Things change in real life. However, in Haskell,
 						you actually can get surprisingly far without any impure
-						functions using monads.
+						functions using monads. Also, we can bend the rules as
+						you've seen in that last example.
 					</aside>
 				</section>
 				<section>
@@ -305,7 +325,7 @@
 					</p>
 				</section>
 				<section>
-					<h1>functions</h1>
+					<h1>Functions</h1>
 					Functions are great, but standard JavaScript syntax is
 					pretty verbose. If functions are 50% of our toolbox, they
 					should be easier to use.
@@ -396,7 +416,7 @@
 					We often want to iterate over a list and do something to
 					each element.
 					<pre><code data-trim class="js">
-						let stuff = [0, 1, 2, 3, 4];
+						const stuff = [0, 1, 2, 3, 4];
 						for (let i = 0; i &lt; stuff.length; i++) {
 							 stuff[i] = stuff[i] + 1;
 						}
@@ -429,7 +449,7 @@
 						that is similar to <code>map()</code>.
 						<pre><code data-trim class="js">
 							const data = [1, 2, 3, 4, 5];
-							let data_plus_one = [];
+							const data_plus_one = [];
 							for (const i of data) {
 								data_plus_one.push(i + 1);
 							}
@@ -485,7 +505,7 @@
 					that you don't want.
 					<pre><code data-trim class="js">
 						const scores = [92, 45, 60, 85, 20, 98, 77, 80];
-						let passing = [];
+						const passing = [];
 						for (const score of passing) {
 							if (score >= 60) {
 								passing.push(score);
@@ -526,13 +546,13 @@
 					<h1>Thinking Like A Functional Programmer</h1>
 				</section>
 				<section>
-					<h2>Writing Pure Functions</h2>
+					<h2>Write Pure Functions</h2>
 					<p style="color:red">Bad</p>
 					<pre><code data-trim class="js">
 						const prices = [1, 3, 2, 5, 2];
 						function print_total() {
 							let total = 0;
-							for (let price of prices) {
+							for (const price of prices) {
 								total += price;
 							}
 							console.log(total);
@@ -551,9 +571,138 @@
 					<h2>Avoid Global State</h2>
 					<p style="color:red">Bad</p>
 					<pre><code data-trim class="js">
+						const player = {
+							hp: 100
+						}
+						function update_hp(new_hp) {
+							player.hp = new_hp;
+						}
 					</code></pre>
 					<p style="color:green">Good</p>
 					<pre><code data-trim class="js">
+						const player = {
+							hp: 100
+						}
+						const update_hp = (player, new_hp) => {
+							return {
+								...player,
+								hp: new_hp
+							}
+						}
+					</code></pre>
+				</section>
+				<section>
+					<h2>Use Dumb Data</h2>
+					<p style="color:red">Bad</p>
+					<pre><code data-trim class="js">
+						class Player {
+							constructor(name, hp) {
+								this.name = name;
+								this.hp = hp;
+							}
+							take_damage(damage) { this.hp -= damage; }
+							print_summary() { 
+								console.log(`${this.name} has ${this.hp} hp.`) 
+							}
+						}
+						const player = new Player("Rob", 100);
+						player.take_damage(10);
+						player.print_summary();
+						// "Rob has 90 hp."
+					</code></pre>
+				</section>
+				<section>
+					<h2>Use Dumb Data</h2>
+					<p style="color:green">Good</p>
+					<pre><code data-trim class="js">
+						const damage = (player, damage) => ({
+							...player,
+							hp: player.hp - damage
+						});
+
+						const to_string = player => 
+							`${player.name} has ${player.hp} hp.`;
+
+						const player = { name: Rob, hp: 100 };
+
+						const damaged_player = damage(player, 10);
+						const summary = to_string(damaged_player);
+						console.log(summary);
+					</code></pre>
+				</section>
+				<section>
+					<h2>Use <code>instanceof</code></h2>
+					<p style="color:red">Bad</p>
+					<pre><code data-trim class="js">
+						// abstract base class
+						class Shape {}
+						class Square extends Shape {
+							constructor(side) { this.side = side; }
+							area() { return this.side**2; }
+						}
+						class Circle extends Shape {
+							constructor(radius) { this.radius = radius; }
+							area() { return 3.14 * this.radius**2; }
+						}
+						const circle_area = new Circle(1).area();
+						const square_area = new Square(1).area();
+					</code></pre>
+				</section>
+				<section>
+					<h2>Use <code>instanceof</code></h2>
+					<p style="color:green">Good</p>
+					<pre><code data-trim class="js">
+						class Shape {}
+						class Square extends Shape {
+							constructor(side) { this.side = side; }
+						}
+						class Circle extends Shape {
+							constructor(radius) { this.radius = radius; }
+						}
+						const calc_area = shape => {
+							if (shape instanceof Circle) return 3.14 * shape.radius**2;
+							else if (shape instanceof Square) return shape.side**2;
+							else throw Error("Unhandled shape.");
+						}
+						const circle_area = calc_area(new Square(1))
+						const square_area = calc_area(new Circle(1))
+					</code></pre>
+				</section>
+				<section>
+					<h2><code>map(), filter(), reduce()</code></h2>
+					<p style="color:red">Bad</p>
+					<pre><code data-trim class="js">
+						const scores = [30, 45, 60, 55, 20, 82, 77, 80];
+						for (let i = 0; i &lt; scores.length; i++) {
+							scores[i] += 20;
+						}
+
+						const passing = [];
+						for (let i = 0; i &lt; scores.length; i++) {
+							if (scores[i] &gt;= 60) {
+								passing.push(scores[i]);
+							}
+						}
+
+						let average;
+						for (let score of scores) average += score;
+						average / scores.length;
+					</code></pre>
+
+				</section>
+				<section>
+					<h2><code>map(), filter(), reduce()</code></h2>
+					<p style="color:green">Good</p>
+					<pre><code data-trim class="js">
+						const scores = [30, 45, 60, 55, 20, 82, 77, 80];
+
+						const curved = scores.map(x => x + 20);
+
+						const passing = curved.filter(x => x >= 60);
+
+						const average = curved.reduce((acc, cur) => acc + cur) 
+							/ curved.length
+
 					</code></pre>
 				</section>
 			</div>
