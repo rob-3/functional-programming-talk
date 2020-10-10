@@ -30,7 +30,7 @@
 						<li>Motivations</li>
 						<li>State and Immutability</li>
 						<li>Higher Order Functions</li>
-						<li>The Promise Monad</li>
+						<li>Thinking Like a Functional Programmer</li>
 					</ul>
 					<aside class="notes">
 						Hi, I'm Rob. Please feel free to interrupt at any point
@@ -38,8 +38,7 @@
 					</aside>
 				</section>
 				<section>
-					<h2>What is Git?</h2>
-					<!-- TODO: git logo -->
+					<h2>What is Functional Programming?</h2>
 					<p class="fragment">
 						Functional programming is a style of programming that
 						emphasizes functions.
@@ -521,6 +520,40 @@
 						const total = data.reduce((acc, cur) => acc + cur, 0);
 						console.log(total);
 						// 26
+					</code></pre>
+				</section>
+				<section>
+					<h1>Thinking Like A Functional Programmer</h1>
+				</section>
+				<section>
+					<h2>Writing Pure Functions</h2>
+					<p style="color:red">Bad</p>
+					<pre><code data-trim class="js">
+						const prices = [1, 3, 2, 5, 2];
+						function print_total() {
+							let total = 0;
+							for (let price of prices) {
+								total += price;
+							}
+							console.log(total);
+						}
+						print_total()
+					</code></pre>
+					<p style="color:green">Good</p>
+					<pre><code data-trim class="js">
+						const prices = [1, 3, 2, 5, 2];
+						const calc_total = arr => 
+							arr.reduce((acc, cur) => acc + cur.price)
+						console.log(calc_total)
+					</code></pre>
+				</section>
+				<section>
+					<h2>Avoid Global State</h2>
+					<p style="color:red">Bad</p>
+					<pre><code data-trim class="js">
+					</code></pre>
+					<p style="color:green">Good</p>
+					<pre><code data-trim class="js">
 					</code></pre>
 				</section>
 			</div>
