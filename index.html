@@ -510,7 +510,7 @@
 					<pre><code data-trim class="js">
 						const scores = [92, 45, 60, 85, 20, 98, 77, 80];
 						const passing = [];
-						for (const score of passing) {
+						for (const score of scores) {
 							if (score >= 60) {
 								passing.push(score);
 							}
@@ -688,7 +688,7 @@
 							}
 						}
 
-						let average;
+						let average = 0;
 						for (let score of scores) average += score;
 						average / scores.length;
 					</code></pre>
