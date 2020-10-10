@@ -81,44 +81,110 @@
 					Let's start off with a demo.
 				</section>
 				<section>
-					<h1>Using Git</h1>
-				</section>
-				<section>
-					<h2><code>Creating a git repo</code></h2>
-					<ul>
-						<li>Create a new folder (or use an existing folder if we
-						are adding git to an existing codebase)</li>
-						<li>Run <code>git init</code>
-							<ul>
-								<li><em>init</em>ializes the git repository</li>
-								<li>Git creates a <code>.git</code> folder to do
-									all the magic</li>
-							</ul>
-						</li>
-					</ul>
-					<pre><code data-trim class="shell">
-						$ mkdir hello_world
-						$ cd hello_world
-						$ git init
-						Initialized empty Git repository in /home/rob/hello_world/.git/
-						$ git status
-						...
-					</code></pre>
+					Why was my library code so evil?
+					<p class="fragment">
+						In short, <strong>state</strong>. State is just anything
+						that can change. When things can change out from under
+						you after any function call or member access, it becomes
+						basically impossible to be certain of the state of the
+						system at any given time.
+					</p>
 					<aside class="notes">
-						To start off, we need to create a directory (or folder)
-						for our git repository and run git init. When we run git
-						status, it helpfully tells us to create a file. Modern
-						git has really nice messages in git status.
+						My very scientific definition of state.
 					</aside>
 				</section>
 				<section>
-					<h2>Adding some content</h2>
-					Git will immediately notice any change (including creation,
-					deletion, or modification) to any file in the repository.
-					<pre><code data-trim class="shell">
-						$ vim knighthacks.js
-						$ git status
+					Why?
+					<p class="fragment">
+						Psychological studies have actually shown that humans
+						are only capable of keeping 7 ± 2 objects in short term
+						memory at a time.
+					</p>
+					<p class="fragment">
+						<strong>Stateful programming doesn't scale.</strong>
+						Once your application has portions of code that have 10,
+						11, or 12 variables, you become <strong>physically
+						incapable</strong> of keeping track of everything.
+					</p>
+					<aside class="notes">
+						Have you ever noticed that when you start a project, you
+						really feel like you're getting things done, but once
+						you've been working on it for a while, progress slows
+						down dramatically and you spend more time fixing bugs
+						than adding features? 
+
+						<p>
+							Some people go as far to say that state is the root
+							of all evil.
+						</p>
+					</aside>
+				</section>
+				<section>
+					<section>
+						In functional programming, we outlaw state.
+						<!-- image of state crossed out -->
+						<p class="fragment">
+							Once we initialize a "variable", we never change it
+							again. This is called <strong>immutability</strong>,
+							because we can't mutate (or change) the state.
+						</p>
+						<p class="fragment">
+							In JavaScript, this means we should use
+							<code>const</code> everywhere.
+						</p>
+						<pre><code data-trim class="js">
+							const message = "Functional programming is great!";
+						</code></pre>
+					</section>
+					<section>
+						Unfortunately, <code>const</code> doesn't actually make
+						things completely immutable in JavaScript.
+						<pre><code data-trim class="js">
+							const weather_states = ["sunny", "rainy"];
+							weather_states.push("overcast");
+							console.log(weather_states);
+							// ["sunny", "rainy", "overcast"]
+							// :(
+						</code></pre>
+					</section>
+					<section>
+						<code>const</code> prevents you from setting the
+						variable to a new array or object, but it doesn't stop
+						you from modifying the array or object itself.
+						<pre><code data-trim class="js">
+							const weather_states = ["sunny", "rainy"];
+							weather_states.push("overcast");
+							console.log(weather_states);
+							// ["sunny", "rainy", "overcast"]
+							// :(
+							weather_states = ["cloudy"]; // this will not work
+						</code></pre>
+					</section>
+					<section>
+						In short, use <code>const</code> whenever you can, but
+						be aware of its limitations.
+					</section>
+				</section>
+				<section>
+					Immutable data is great for our functions. Since nothing can
+					ever change, we don't have to worry that a function call has
+					gone and messed things up behind our back.
+					<pre class="fragment"><code data-trim class="js">
+							function calculate_something(a, b) { ... }
+							function get_data() { ... }
+
+							const one = calculate_something(1, "hello");
+
+							const data = get_data();
+
+							// we know for sure this will be the same
+							const two = calculate_something(1, "hello");
 					</code></pre>
+					<aside class="notes">
+						There's another great thing about this: if we call a
+						function with the same arguments, we are guaranteed to
+						get the same result.
+					</aside>
 				</section>
 				<section>
 					<h2>Side Effects</h2>
@@ -199,7 +265,7 @@
 							return array;
 						}
 					</code></pre>
-					<p>
+					<p class="fragment">
 						No, it modifies the <code>array</code> argument, which
 						is a side effect (some other part of the code might be
 						looking at <code>array</code>).
@@ -225,7 +291,9 @@
 					<aside class="notes">
 						We don't live in a purely functional world. Users expect
 						to be able to provide input and see corresponding
-						output. Things change in real life.
+						output. Things change in real life. However, in Haskell,
+						you actually can get surprisingly far without any impure
+						functions using monads.
 					</aside>
 				</section>
 				<section>
@@ -257,15 +325,15 @@
 							return a + b;
 						}
 					</code></pre>
-					<pre><code data-trim class="js">
+					<pre class="fragment"><code data-trim class="js">
 						// better
 						function(a, b) { return a + b; }
 					</code></pre>
-					<pre><code data-trim class="js">
+					<pre class="fragment"><code data-trim class="js">
 						// best
 						(a, b) => a + b;
 					</code></pre>
-					<pre><code data-trim class="js">
+					<pre class="fragment"><code data-trim class="js">
 						// we can even drop the () if there is only 1 parameter
 						a => a + 2;
 					</code></pre>
@@ -320,7 +388,6 @@
 					<aside class="notes">
 						If you take away one thing from the entire talk, this
 						next part is it.
->>>>>>> 985cdab... Add code and many slides
 					</aside>
 				</section>
 				<section>
