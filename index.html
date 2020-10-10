@@ -568,7 +568,7 @@
 						const prices = [1, 3, 2, 5, 2];
 						const calc_total = arr => 
 							arr.reduce((acc, cur) => acc + cur)
-						console.log(calc_total)
+						console.log(calc_total(prices))
 					</code></pre>
 				</section>
 				<section>
@@ -627,7 +627,7 @@
 						const to_string = player => 
 							`${player.name} has ${player.hp} hp.`;
 
-						const player = { name: Rob, hp: 100 };
+						const player = { name: "Rob", hp: 100 };
 
 						const damaged_player = damage(player, 10);
 						const summary = to_string(damaged_player);
